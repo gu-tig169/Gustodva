@@ -1,54 +1,92 @@
 import 'dart:collection';
 import 'package:flutter/material.dart';
+import 'package:myfirstapp/api.dart';
 
-class MyTask {
+class Task {
   String text;
   bool completed;
+  String id;
 
-  MyTask({this.text,
+  Task({
+    this.text,
     this.completed = false,
+    this.id,
   });
 
-  void completedTask() {
-    completed = !completed;
+  static Map<String, dynamic> toJson(Task task) {
+    return {
+      "title": task.text,
+      "done": task.completed,
+    };
+  }
+
+  static Task fromJson(Map<String, dynamic> json) {
+    return Task(text: json["title"], completed: json["done"], id: json["id"]);
+  }
+
+  void toggleCompleted() {
+    if (completed == true) {
+      completed = false;
+    } else {
+      completed = true;
+    }
   }
 }
 
 class MyState extends ChangeNotifier {
-  List<MyTask> _list = [];
+  List<Task> _list = [];
 
-  String filterSetting = 'All'; 
+  String _filterBy = "All";
 
-  List<MyTask> get list => _list;
+  List<Task> get list => _list;
 
-  UnmodifiableListView<MyTask> get allTasks => 
-      UnmodifiableListView(_list);
+  /* Future getList() async {
+    List <Task> list = await Api.getList ();
+    _list = list;
+    notifyListeners();
+  } */
 
-  UnmodifiableListView<MyTask> get incompleteTasks =>
-             UnmodifiableListView(_list.where((task) => !task.completed));
+  String get filterBy => _filterBy;
 
-  UnmodifiableListView<MyTask> get completedTasks =>
-                 UnmodifiableListView(_list.where((task) => task.completed));
+  UnmodifiableListView<Task> get filteredTasks {
+    if (_filterBy == 'All') return allTasks;
+  }
 
-  void addItem(String text) {
-    _list.add(MyTask(text: text));
+  UnmodifiableListView<Task> get allTasks => UnmodifiableListView(_list);
+  UnmodifiableListView<Task> get incompleteTasks =>
+      UnmodifiableListView(_list.where((task) => !task.completed));
+  UnmodifiableListView<Task> get completedTasks =>
+      UnmodifiableListView(_list.where((task) => task.completed));
+
+  Future getList() async {
+    List<Task> list = await Api.getTodos();
+    _list = list;
     notifyListeners();
   }
 
-  void removeItem(int index) {
-    _list.removeAt(index);
-    notifyListeners();
+  void addItem(Task task) async {
+    await Api.addTodo(task);
+    await getList();
+    //_list.add(Task(text: task));
+    //notifyListeners();
   }
 
-  void changeState(MyTask task) {
+  void removeItem(Task task) async {
+    await Api.deleteTask(task.id);
+    await getList();
+    //_list.removeAt(task);
+    //notifyListeners();
+  }
+
+  void changeState(Task task) {
+    //Skriva något här för updateTodos?
     final taskIndex = _list.indexOf(task);
-    _list[taskIndex].completedTask();
+    _list[taskIndex].toggleCompleted();
     notifyListeners();
   }
 
- /* void filterView(String filterSetting) {
-    _list. 
-    
-     }
-}*/
+  void setFilterBy(String filterBy) {
+    this._filterBy = filterBy;
+    notifyListeners();
+  }
 }

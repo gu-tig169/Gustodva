@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:myfirstapp/FilterView.dart';
 import 'package:myfirstapp/SecondView.dart';
 import 'package:provider/provider.dart';
-import './model.dart';
-import 'FilterView.dart';
-
+import 'model.dart';
 
 void main() {
   var state = MyState();
+  state.getList();
 
   runApp(ChangeNotifierProvider(
     create: (context) => state,
@@ -23,75 +23,59 @@ class MyApp extends StatelessWidget {
   }
 }
 
+
 class MainView extends StatelessWidget {
-Widget build(BuildContext context) {
- return Scaffold(
-appBar: AppBar(
-  backgroundColor: (Colors.grey),
-  title: Text('TIG169 TODO',
-  style: TextStyle(color: Colors.black, fontSize: 26)),
-  actions: <Widget>[
-    _filterView(),
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: (Colors.grey),
+        title: Text('TIG169 TODO',
+            style: TextStyle(color: Colors.black, fontSize: 26)),
+        actions: [
+          PopupMenuButton(
+              onSelected: (value) {
+                Provider.of<MyState>(context, listen: false).setFilterBy(value);
+              },
+              itemBuilder: (context) => [
+                    PopupMenuItem(child: Text('All'), value: 'All'),
+                    PopupMenuItem(child: Text('Done'), value: 'Done'),
+                    PopupMenuItem(child: Text('Undone'), value: 'Undone'),
+                  ])
         ],
       ),
-    body: Center(
-    child: _list(context),
-        ),
-    floatingActionButton: _fab(context),    
-    );
-  }
-
-  Widget _list(context) {
-    var filter = Provider.of<MyState>(context, listen:false).filterSetting;
-    if (filter == 'All') {
-      return AllTasksTab();
-    }
-    if (filter == 'Done') {
-      return CompletedTasksTab();
-    }
-    if (filter == 'Undone') {
-      return IncompleteTasksTab();
-    }     
-  }
-
-  Widget _fab(context) {
-    return FloatingActionButton(
-      child: Icon(Icons.add, size: 56),
-      backgroundColor: Colors.grey,
-      onPressed: () {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => SecondView()));
-      },
-    );
-  }
-
-  Widget _filterView() {
-    return PopupMenuButton<String>(
-      onSelected: (result) {
-        if (result == "2") {
-          CompletedTasksTab();
-        }
-      },
-      icon: Icon(
-        Icons.more_vert,
-        size: 30.0,
-        color: Colors.black54,
+      body: Consumer<MyState>(
+        builder: (context, state, child) => _list(state.filterBy),
       ),
-      color: Colors.white,
-      itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-        PopupMenuItem<String>(
-          value: "1",
-          child: Text("All"),
-        ),
-        PopupMenuItem<String>(
-          value: "2",
-          child: Text("Done"),
-        ),
-        PopupMenuItem<String>(
-          value: "3",
-          child: Text("Undone"),
-        )
-      ],
+      floatingActionButton: _fab(context),
     );
+  }
+
+  Widget _list(filterBy) {
+    if (filterBy == "All") return AllTasksTab();
+
+    if (filterBy == "Done") return CompletedTasksTab();
+
+    if (filterBy == "Undone") return IncompleteTasksTab();
+
+    return null;
   }
 }
+
+Widget _fab(context) {
+  return FloatingActionButton(
+    child: Icon(Icons.add, size: 56),
+    backgroundColor: Colors.grey,
+    onPressed: () {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => SecondView()));
+    },
+  );
+}
+
+/*Future<String> _getFromApi() async {
+  http.Response response =
+      await http.get('https://todoapp-api-vldfm.ondigitalocean.app/todos?Key=[API_KEY]');
+      var jsonData = response.body;
+      var obj = jsonDecode(jsonData);
+      return "${obj["title"]}" "${obj ["bool"]}";
+} */
