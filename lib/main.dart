@@ -6,7 +6,7 @@ import 'model.dart';
 
 void main() {
   var state = MyState();
-  state.getList();
+  state.getTodos();
 
   runApp(ChangeNotifierProvider(
     create: (context) => state,
@@ -22,7 +22,6 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
 
 class MainView extends StatelessWidget {
   Widget build(BuildContext context) {
@@ -51,11 +50,11 @@ class MainView extends StatelessWidget {
   }
 
   Widget _list(filterBy) {
-    if (filterBy == "All") return AllTasksTab();
+    if (filterBy == "All") return AllTodosTab();
 
-    if (filterBy == "Done") return CompletedTasksTab();
+    if (filterBy == "Done") return CompletedTodosTab();
 
-    if (filterBy == "Undone") return IncompleteTasksTab();
+    if (filterBy == "Undone") return IncompleteTodosTab();
 
     return null;
   }
@@ -71,11 +70,3 @@ Widget _fab(context) {
     },
   );
 }
-
-/*Future<String> _getFromApi() async {
-  http.Response response =
-      await http.get('https://todoapp-api-vldfm.ondigitalocean.app/todos?Key=[API_KEY]');
-      var jsonData = response.body;
-      var obj = jsonDecode(jsonData);
-      return "${obj["title"]}" "${obj ["bool"]}";
-} */

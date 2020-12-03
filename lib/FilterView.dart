@@ -3,35 +3,35 @@ import 'package:myfirstapp/ToDoList.dart';
 import 'package:myfirstapp/model.dart';
 import 'package:provider/provider.dart';
 
-class AllTasksTab extends StatelessWidget {
+class AllTodosTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
         child: Consumer<MyState>(
-            builder: (context, task, child) => ToDoList(list: task.allTasks)));
+            builder: (context, todo, child) => ToDoList(list: todo.allTodos)));
   }
 }
 
-class CompletedTasksTab extends StatelessWidget {
+class CompletedTodosTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
       child: Consumer<MyState>(
-        builder: (context, task, child) => ToDoList(
-          list: task.completedTasks,
+        builder: (context, todo, child) => ToDoList(
+          list: todo.completedTodos,
         ),
       ),
     );
   }
 }
 
-class IncompleteTasksTab extends StatelessWidget {
+class IncompleteTodosTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
       child: Consumer<MyState>(
-        builder: (context, task, child) => ToDoList(
-          list: task.incompleteTasks,
+        builder: (context, todo, child) => ToDoList(
+          list: todo.incompleteTodos,
         ),
       ),
     );

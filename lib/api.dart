@@ -2,40 +2,37 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:myfirstapp/model.dart';
 
-const API_URL = "https://todoapp-api-vldfm.ondigitalocean.app/";
-const API_KEY = "4e2ee94b-d3ad-401d-a815-bf791c7d1f63";
+const API_URL = "https://todoapp-api-vldfm.ondigitalocean.app";
+const API_KEY = "76cc6ec9-b0f2-4417-9472-d39a5e49c409";
 
 class Api {
-  static Future addTodo(Task task) async {
-    print(task);
-    var json = jsonEncode(Task.toJson(task));
+  static Future addTodo(Todo todo) async {
+    var json = jsonEncode(Todo.toJson(todo));
     print(json);
     await http.post(
       "$API_URL/todos?key=$API_KEY",
       body: json,
       headers: {"Content-Type": "application/json"},
     );
-    print("done");
   }
 
-  static Future updateTodos(Task task) async {
-    var json = jsonEncode(Task.toJson(task));
-    await http.put("$API_URL/todos/id?key=$API_KEY", body: json);
-  }
-
-  static Future deleteTask(String taskID) async {
-    await http.delete("$API_URL/todos/id?key=$API_KEY");
-  }
-
-  static Future<List<Task>> getTodos() async {
-    var response = await http.get("$API_URL/todos?key=$API_KEY");
-    String bodyString = response.body;
-    print(response.body);
-    List<Map<String, dynamic>> json = jsonDecode(bodyString);
+  static Future updateTodos(Todo todo, String id) async {
+    var json = jsonEncode(Todo.toJson(todo));
     print(json);
+    await http.put("$API_URL/todos/$id?key=$API_KEY",
+        body: json, headers: {"Content-Type": "application/json"});
+  }
 
-    return json.map<Task>((data) {
-      return Task.fromJson(data);
+  static Future deleteTodos(String id) async {
+    await http.delete("$API_URL/todos/$id?key=$API_KEY");
+  }
+
+  static Future<List<Todo>> getTodos() async {
+    var response = await http.get("$API_URL/todos?key=$API_KEY");
+    print(response.body);
+    var json = jsonDecode(response.body);
+    return json.map<Todo>((data) {
+      return Todo.fromJson(data);
     }).toList();
   }
 }
