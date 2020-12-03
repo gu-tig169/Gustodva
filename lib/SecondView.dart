@@ -35,9 +35,9 @@ class SecondView extends StatelessWidget {
                 RaisedButton(
                     child: Text('+ADD'),
                     onPressed: () {
-                      var task = Task (text : controller.text);
+                      var todo = Todo(title: controller.text);
                       Provider.of<MyState>(context, listen: false)
-                          .addItem(task);
+                          .addItem(todo);
                       Navigator.pop(
                         context,
                       );

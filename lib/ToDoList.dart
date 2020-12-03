@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'model.dart';
 
 class ToDoList extends StatefulWidget {
-  final List<Task> list;
+  final List<Todo> list;
 
   ToDoList({this.list});
 
@@ -19,18 +19,19 @@ class _ToDoListState extends State<ToDoList> {
     );
   }
 
-  Widget _item(context, Task item, index) {
+  Widget _item(context, Todo todo, index) {
     return ListTile(
-        title: Text(item.text),
+        title: Text(todo.title),
         leading: Checkbox(
-          value: item.completed,
-          onChanged: (bool done) {
-            Provider.of<MyState>(context, listen: false).changeState(item);
+          value: todo.completed,
+          onChanged: (bool checked) {
+            Provider.of<MyState>(context, listen: false)
+                .changeState(todo, checked);
           },
         ),
         trailing: IconButton(
           onPressed: () {
-            Provider.of<MyState>(context, listen: false).removeItem(index);
+            Provider.of<MyState>(context, listen: false).removeItem(todo);
           },
           icon: Icon(Icons.cancel),
         ));
